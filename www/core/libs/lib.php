@@ -11,7 +11,7 @@ class Lib {
 
 	}
 
-	//-- закрипит активная модуля для ползовател
+	//-- Закрепить активный модуль для пользователей
 	public function ModulAccess($person_id, $moduls_key,  $modul_code, $function_code)
 	{
 		$BD = new MySQL (null, 'DB_Bank_and_Core_Sel');
