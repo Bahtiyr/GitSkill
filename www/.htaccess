@@ -1,0 +1,111 @@
+# включаем mod_rewrite
+RewriteEngine On
+
+#Включаем отслеживание сим-ссылок
+Options +FollowSymLinks
+#Запускаем url_rewriting
+RewriteEngine On
+#Блокируем все ссылки, содержащие <script>
+RewriteCond %{QUERY_STRING} (\<|%3C).*script.*(\>|%3E) [NC,OR]
+#Блокируем все скрипты, которые пытаются изменить переменные PHP Globals:
+RewriteCond %{QUERY_STRING} GLOBALS(=|\[|\%[0-9A-Z]{0,2}) [OR]
+#Блокируем все скрипты, которые пытаются изменить переменную _REQUEST:
+RewriteCond %{QUERY_STRING} _REQUEST(=|\[|\%[0-9A-Z]{0,2})
+
+# если запрашиваемый пользователем URL - это не существующий на сервере файл...
+
+RewriteCond %{REQUEST_FILENAME} !-f
+# ...и не существующая на сервере директория
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# перенаправляем запрос пользователя на Application
+#AddType text/cache-manifest .manifest
+
+RewriteRule ^(serviceWorker.js)$ /Application/serviceWorker/serviceWorker.js [L]
+RewriteRule ^(sw-register.js)$ /Application/serviceWorker/sw-register.js [L]
+
+#RewriteRule ^(ru/manifest.json)$ /Application/manifest.json [L]
+
+# перенаправляем запрос пользователя на Storage
+RewriteRule ^(ru/index.js)$ /Storage/index.js [L]
+RewriteRule ^(ru/indexedDB.js)$ /Storage/indexedDB.js [L]
+
+# перенаправляем запрос пользователя на index.php
+RewriteRule ^(ru/.*)$ index.php [L]
+RewriteRule ^(uz/.*)$ index.php [L]
+RewriteRule ^(en/.*)$ index.php [L]
+RewriteRule ^(luz/.*)$ index.php [L]
+
+
+
+#RewriteCond %{HTTP_HOST} ^xxi\.ru$ [OR]
+
+#RewriteEngine On
+#RewriteCond $1 !^(index\.php|robots\.txt|img|styles|js)
+#RewriteRule ^(.*)$ /index.php?/$1 [L]
+
+#php_flag display_errors on
+#php_value error_reporting "E_ALL & ~E_NOTICE"
+
+AddDefaultCharset utf-8
+
+php_flag session.use_trans_sid off
+SetEnv TZ Asia/Tashkent
+#php_value memory_limit 512M
+
+#Усиливаем кеширование
+FileETag MTime Size
+<ifmodule mod_expires.c>
+<filesmatch ".(jpeg|jpg|gif|png|css|js)$">
+ExpiresActive on
+ExpiresDefault "access plus 1 year"
+</filesmatch>
+</ifmodule>
+
+#Сжимаем элементы с помощью mod_deflate
+<ifmodule mod_deflate.c="">
+<filesmatch .(js|css)$="">
+SetOutputFilter DEFLATE
+</filesmatch>
+</ifmodule>
+
+#Сжимаем компоненты сайта путем включения Gzip
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/plain
+  AddOutputFilterByType DEFLATE text/html
+  AddOutputFilterByType DEFLATE text/xml
+  AddOutputFilterByType DEFLATE text/css
+  AddOutputFilterByType DEFLATE application/xml
+  AddOutputFilterByType DEFLATE application/xhtml+xml
+  AddOutputFilterByType DEFLATE application/rss+xml
+  AddOutputFilterByType DEFLATE application/javascript
+  AddOutputFilterByType DEFLATE application/x-javascript
+  <IfModule mod_setenvif.c>
+    BrowserMatch ^Mozilla/4 gzip-only-text/html
+    BrowserMatch ^Mozilla/4\.0[678] no-gzip
+    BrowserMatch \bMSIE !no-gzip !gzip-only-text/html
+  </IfModule>
+</IfModule>
+
+#Блокируем плохих ботов и роботов
+SetEnvIfNoCase user-Agent ^FrontPage [NC,OR]
+SetEnvIfNoCase user-Agent ^Java.* [NC,OR]
+SetEnvIfNoCase user-Agent ^Microsoft.URL [NC,OR]
+SetEnvIfNoCase user-Agent ^MSFrontPage [NC,OR]
+SetEnvIfNoCase user-Agent ^Offline.Explorer [NC,OR]
+SetEnvIfNoCase user-Agent ^[Ww]eb[Bb]andit [NC,OR]
+SetEnvIfNoCase user-Agent ^Zeus [NC]
+<limit get="" post="" head="">
+Order Allow,Deny
+Allow from all
+Deny from env=bad_bot
+</limit>
+
+#Для использования скриптами компилятора PHP 5.3
+#AddHandler application/x-httpd-php53 .php 
+
+#Для использования скриптами компилятора PHP 5.5
+#AddHandler application/x-httpd-php55 .php 
+
+#Для использования скриптами компилятора PHP 5.6
+#AddHandler application/x-httpd-php56 .php 
