@@ -12,5 +12,6 @@
 			<attribute name="hide" value="true"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry combineaccessrules="false" kind="src" path="/Listing.uz"/>
 	<classpathentry kind="output" path=""/>
 </classpath>
