@@ -11,7 +11,7 @@ class DB_Default {
 	const CHARSETCOLAT = 'utf8_general_ci';
 }
 
-//-- Подключения банковские БД
+//-- Подключения банковские БДgg
 class DB_Bank {
 	const DB_HOST = 'localhost';
 	const DB_PORT = '3306';
